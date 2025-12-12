@@ -1,0 +1,44 @@
+services:
+  - name: resume-extractor-web
+    type: web
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: FLASK_SECRET_KEY
+        value: "change-this"
+      - key: UPLOAD_FOLDER
+        value: "/app/uploads"
+      - key: OUTPUT_FOLDER
+        value: "/app/output"
+      - key: REDIS_URL
+        fromService:
+          name: resume-extractor-redis
+          type: redis
+          property: connectionString
+
+  - name: resume-extractor-worker
+    type: worker
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: UPLOAD_FOLDER
+        value: "/app/uploads"
+      - key: OUTPUT_FOLDER
+        value: "/app/output"
+      - key: REDIS_URL
+        fromService:
+          name: resume-extractor-redis
+          type: redis
+          property: connectionString
+
+databases:
+  - name: resume-extractor-redis
+    plan: free
