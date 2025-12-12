@@ -32,7 +32,7 @@ def extract_text_from_pdf(path):
             for img in images:
                 parts.append(pytesseract.image_to_string(img))
             if parts:
-                text = "\\n".join(parts)
+                text = "\n".join(parts)
         except Exception:
             pass
     return text
@@ -40,7 +40,7 @@ def extract_text_from_pdf(path):
 def extract_text_from_docx(path):
     try:
         doc = Document(path)
-        return "\\n".join(p.text for p in doc.paragraphs)
+        return "\n".join(p.text for p in doc.paragraphs)
     except Exception:
         return ""
 
@@ -84,7 +84,7 @@ def detect_phones(text, region="IN"):
 def llm_extract_structured(text):
     max_chars = 25000
     t = text[:max_chars]
-    prompt = f\"\"\"You are a resume parser. Return ONLY valid JSON with keys:
+    prompt = f"""You are a resume parser. Return ONLY valid JSON with keys:
 Name, Email, Phone, Experience, Skills, Education, Current Company, Location, Summary
 
 Rules:
@@ -99,9 +99,9 @@ Rules:
 - Summary: short 1-2 sentence summary
 
 Resume text:
-\"\"\"{t}
-\"\"\"
-\"\"\"
+"""{t}
+"""
+"""
     try:
         resp = client.responses.create(model="gpt-4.1-mini", input=prompt, max_output_tokens=800)
         raw = getattr(resp, "output_text", "") or ""
@@ -122,8 +122,7 @@ def build_excel(records):
     ws.title = "Resumes"
     headers = ["Name","Email","Phone","Experience","Skills","Education","Current Company","Location","Summary"]
     ws.append(headers)
-    # styling
-    from openpyxl.styles import Font, Alignment
+    from openpyxl.styles import Font
     header_font = Font(bold=True)
     for cell in ws[1]:
         cell.font = header_font

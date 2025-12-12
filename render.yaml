@@ -1,3 +1,7 @@
+databases:
+  - name: resume-extractor-redis
+    plan: free
+
 services:
   - name: resume-extractor-web
     type: web
@@ -16,8 +20,8 @@ services:
         value: "/app/output"
       - key: REDIS_URL
         fromService:
-          name: resume-extractor-redis
           type: redis
+          name: resume-extractor-redis
           property: connectionString
 
   - name: resume-extractor-worker
@@ -35,10 +39,6 @@ services:
         value: "/app/output"
       - key: REDIS_URL
         fromService:
-          name: resume-extractor-redis
           type: redis
+          name: resume-extractor-redis
           property: connectionString
-
-databases:
-  - name: resume-extractor-redis
-    plan: free
